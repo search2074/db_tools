@@ -1,7 +1,8 @@
 <?php
 
 $params = require __DIR__ . '/params.php';
-$db = require __DIR__ . '/db.php';
+$left_db = require __DIR__ . '/left_db.php';
+$right_db = require __DIR__ . '/right_db.php';
 
 $config = [
     'id' => 'basic',
@@ -42,7 +43,8 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
+        'left_db' => $left_db,
+        'right_db' => $right_db,
         'urlManager' => [
             'class' => 'yii\web\urlManager',
             'enablePrettyUrl' => true,
