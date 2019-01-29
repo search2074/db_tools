@@ -19,18 +19,20 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4>Database: <?php echo DatabaseService::getDbName(Yii::$app->left_db->dsn) ?></h4>
         </div>
         <?php echo GridView::widget([
+            'id' => 'left-database',
             'dataProvider' => $leftDbDataProvider,
             'pager' => ['maxButtonCount' => 5],
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+                ['class' => 'yii\grid\CheckboxColumn',],
+                    ['class' => 'yii\grid\SerialColumn'],
                 [
                     'label' =>"Название таблицы",
+                    'contentOptions' => ['class' => 'table-name'],
                     'attribute' => 'title',
                     'value'=>function($value, $key){
                         return $value;
                     }
                 ],
-                ['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
     </div>
@@ -46,19 +48,28 @@ $this->params['breadcrumbs'][] = $this->title;
             <h4>Database: <?php echo DatabaseService::getDbName(Yii::$app->right_db->dsn) ?></h4>
         </div>
         <?php echo GridView::widget([
+            'id' => 'right-database',
             'dataProvider' => $rightDbDataProvider,
             'pager' => ['maxButtonCount' => 5],
             'columns' => [
+                ['class' => 'yii\grid\CheckboxColumn',],
                 ['class' => 'yii\grid\SerialColumn'],
                 [
                     'label' =>"Название таблицы",
+                    'contentOptions' => ['class' => 'table-name'],
                     'attribute' => 'title',
                     'value'=>function($value, $key){
                         return $value;
                     }
                 ],
-                ['class' => 'yii\grid\ActionColumn'],
             ],
         ]); ?>
     </div>
+</div>
+<div class="database__contols">
+    <div class="col-md-5"></div>
+    <div class="col-md-2">
+        <button type="button" class="start-process btn btn-success">Start process</button>
+    </div>
+    <div class="col-md-5"></div>
 </div>

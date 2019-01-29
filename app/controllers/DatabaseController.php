@@ -54,7 +54,18 @@ class DatabaseController extends Controller
 
         return $this->render('index', [
             'leftDbDataProvider' => $leftDatabaseService->getDataProvider(),
-            'rightDbDataProvider' => $leftDatabaseService->getDataProvider(),
+            'rightDbDataProvider' => $rightDatabaseService->getDataProvider(),
         ]);
+    }
+
+    public function actionProcess(){
+        if (!Yii::$app->request->isAjax) {
+            echo "is not a post";
+        }
+
+        var_dump(Yii::$app->request->post('left_tables'));
+        var_dump(Yii::$app->request->post('right_tables'));
+
+        die;
     }
 }
