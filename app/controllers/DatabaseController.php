@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use Yii;
+use app\helpers\Db;
 use yii\web\Response;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -21,7 +22,7 @@ class DatabaseController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'process' => ['post'],
                 ],
             ],
         ];
@@ -50,22 +51,64 @@ class DatabaseController extends Controller
     public function actionIndex()
     {
         $leftDatabaseService = new DatabaseService('left_db');
+        $leftDbDataProvider = $leftDatabaseService->getDataProvider();
         $rightDatabaseService = new DatabaseService('right_db');
+        $rightDbDataProvider = $rightDatabaseService->getDataProvider();
+        $leftDatabaseDiff = $leftDatabaseService->getDiff($rightDbDataProvider);
+        $rightDatabaseDiff = $rightDatabaseService->getDiff($leftDbDataProvider);
 
         return $this->render('index', [
-            'leftDbDataProvider' => $leftDatabaseService->getDataProvider(),
-            'rightDbDataProvider' => $rightDatabaseService->getDataProvider(),
+            'leftDbDataProvider' => $leftDbDataProvider,
+            'rightDbDataProvider' => $rightDbDataProvider,
+            'leftDatabaseDiff' => $leftDatabaseDiff,
+            'rightDatabaseDiff' => $rightDatabaseDiff
         ]);
     }
 
     public function actionProcess(){
-        if (!Yii::$app->request->isAjax) {
-            echo "is not a post";
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if(!empty(Yii::$app->request->post('left_tables'))){
+            foreach (Yii::$app->request->post('left_tables') as $table) {
+                try {
+                    Db::export('left_db', $table);
+                    Db::import('right_db', $table);
+                }
+                catch (\yii\db\Exception $exception){
+                    return [
+                        'success' => false,
+                        'error' => [
+                            'type' => 'database error',
+                            'message' => $exception->getMessage()
+                        ]
+                    ];
+                }
+                catch (\yii\base\InvalidArgumentException $exception){
+                    return [
+                        'success' => false,
+                        'error' => [
+                            'type' => 'argument error',
+                            'message' => $exception->getMessage()
+                        ]
+                    ];
+                }
+                catch (\yii\base\Exception $exception){
+                    return [
+                        'success' => false,
+                        'error' => [
+                            'type' => 'base error',
+                            'message' => $exception->getMessage()
+                        ]
+                    ];
+                }
+            }
         }
 
-        var_dump(Yii::$app->request->post('left_tables'));
-        var_dump(Yii::$app->request->post('right_tables'));
+//        var_dump(Yii::$app->request->post('left_tables'));
+//        var_dump(Yii::$app->request->post('right_tables'));
 
-        die;
+        return [
+            'success' => true
+        ];
     }
 }

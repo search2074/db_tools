@@ -3,12 +3,17 @@
 namespace app\services;
 
 use Yii;
-use yii\data\ArrayDataProvider;
+use app\helpers\Db;
 use yii\db\Exception;
+use yii\data\ArrayDataProvider;
 
 class DatabaseService
 {
     public $db;
+    /**
+     * @var ArrayDataProvider
+     */
+    public $dataProvider;
 
     /**
      * DatabaseService constructor.
@@ -32,17 +37,16 @@ class DatabaseService
     }
 
     public static function getDbName($dsn){
-        if (preg_match('/dbname=([^;]*)/', $dsn, $match)) {
-            return $match[1];
-        } else {
-            return null;
-        }
+        return Db::getDsnAttribute('dbname', $dsn);
     }
 
+    /**
+     * @return ArrayDataProvider
+     */
     public function getDataProvider(){
         $tables = $this->getTables();
 
-        $dataProvider = new ArrayDataProvider([
+        $this->dataProvider = new ArrayDataProvider([
             'allModels' => $tables,
             'sort' => [ // подключаем сортировку
                 'attributes' => ['title'],
@@ -52,6 +56,22 @@ class DatabaseService
             ],
         ]);
 
-        return $dataProvider;
+        return $this->dataProvider;
+    }
+
+    /**
+     * Compare with other data provider
+     * @param ArrayDataProvider $comparedDataProvider
+     * @return array
+     */
+    public function getDiff(ArrayDataProvider $comparedDataProvider){
+        $diff = array_diff(
+            $this->dataProvider->getModels(),
+            $comparedDataProvider->getModels()
+        );
+
+        return [
+            'new_tables' => $diff
+        ];
     }
 }

@@ -12,8 +12,11 @@ $( document ).ready(function() {
         return values;
     }
 
-    $('.database__list').on('change', "input[name='selection[]']", function () {
-        alert('change checkbox');
+    $('.database__list').on('click', "input[name='selection[]']", function (e) {
+        if($(this).parents('#right-database').length){
+            alert('Действие запрещено');
+            e.preventDefault().stopPropagation();
+        }
     });
 
     $('.database__contols').on('click', '.start-process', function(){
@@ -31,8 +34,15 @@ $( document ).ready(function() {
         );
     });
 
-    function onDatabaseProcessed() {
-        $('.database__contols').removeClass('spinner').text('Finished');
+    function onDatabaseProcessed(data) {
+        if(data.success){
+            $('.database__contols').removeClass('spinner').text('Finished');
+            alert('Успех');
+            $.pjax.reload({container:'#left-database'});
+            $.pjax.reload({container:'#right-database'});
+        }
+        else {
+            alert('Error: ' + data.error.message);
+        }
     }
-
 });
