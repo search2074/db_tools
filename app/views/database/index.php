@@ -11,7 +11,7 @@ use app\services\DatabaseService;
 /* @var $leftDatabaseDiff array */
 /* @var $rightDatabaseDiff array */
 
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = 'Database';
 ?>
 
 <div class="database__list">

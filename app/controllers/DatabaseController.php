@@ -13,12 +13,24 @@ use app\services\DatabaseService;
 
 class DatabaseController extends Controller
 {
+    public $title = 'Database';
+
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
         return [
+            // only auth user for all actions
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [

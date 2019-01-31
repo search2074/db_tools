@@ -140,6 +140,10 @@ a.desc:after {
     padding: 10px 0;
 }
 
+.database__debug {
+    display: none;
+}
+
 .database__contols {
     overflow: hidden;
     padding: 10px 0;

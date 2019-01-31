@@ -36,7 +36,7 @@ $( document ).ready(function() {
 
     function onDatabaseProcessed(data) {
         if(data.success){
-            $('.database__contols').removeClass('spinner').text('Finished');
+            $('.database__contols .start-process').removeClass('spinner').text('Finished');
             alert('Успех');
             $.pjax.reload({container:'#left-database'});
             $.pjax.reload({container:'#right-database'});
