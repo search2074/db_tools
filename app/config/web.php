@@ -46,7 +46,7 @@ $config = [
         'left_db' => $left_db,
         'right_db' => $right_db,
         'urlManager' => [
-            'class' => 'yii\web\urlManager',
+            'class' => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
@@ -71,6 +71,10 @@ if (YII_ENV_DEV) {
         // uncomment the following to add your IP if you are not connecting from localhost.
         //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
+}
+
+if(!empty($params['baseUrl'])){
+    $config['components']['request']['baseUrl'] = $params['baseUrl'];
 }
 
 return $config;

@@ -7,6 +7,7 @@
 
 namespace app\assets;
 
+use Yii;
 use yii\web\AssetBundle;
 
 /**
@@ -29,4 +30,13 @@ class AppAsset extends AssetBundle
         'yii\web\YiiAsset',
         'yii\bootstrap\BootstrapAsset',
     ];
+
+    public function init()
+    {
+        parent::init();
+
+        if (!empty(Yii::$app->params['baseUrl'])) {
+            $this->baseUrl = Yii::$app->params['baseUrl'];
+        }
+    }
 }

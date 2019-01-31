@@ -24,14 +24,38 @@ return [
         'charset' => 'utf8',
         'enableSchemaCache' => false,
     ],
-    'user' => [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',        
+    'params' => [
+        'user' => [
+            '100' => [
+                'id' => '100',
+                'username' => 'admin',
+                'password' => 'admin',
+                'authKey' => 'test100key',
+                'accessToken' => '100-token',        
+            ],
         ],
+        // if app located in folder
+        // 'baseUrl' => '/db-tools'
     ],
+    
 ];
+```
+
+# Nginx configs
+App in separate directory:
+```
+server {
+    listen  80;
+	server_name site.com;
+
+	root /var/www/site.com;
+	index index.php index.html index.htm;
+	
+	# separate location 
+	location /db-tools {
+        alias /var/www/db_tools/app/web;
+        index /db_tools/app/web/index.php;
+        try_files $uri $uri/ /db_tools/app/web/index.php?$args;
+    }
+}
 ```
