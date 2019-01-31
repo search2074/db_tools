@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = 'Database';
             <p>Новых таблиц: <?php echo count($leftDatabaseDiff['new_tables']); ?></p>
         </div>
         <?php \yii\widgets\Pjax::begin([
-            'enablePushState'=>FALSE
+            'id' => 'left-database-pjax-id'
         ]); ?>
         <?php echo GridView::widget([
             'id' => 'left-database',
@@ -63,7 +63,7 @@ $this->params['breadcrumbs'][] = 'Database';
             <p>Новых таблиц: <?php echo count($rightDatabaseDiff['new_tables']); ?></p>
         </div>
         <?php \yii\widgets\Pjax::begin([
-            'enablePushState'=>FALSE
+            'id' => 'right-database-pjax-id'
         ]); ?>
         <?php echo GridView::widget([
             'id' => 'right-database',

@@ -36,10 +36,14 @@ $( document ).ready(function() {
 
     function onDatabaseProcessed(data) {
         if(data.success){
-            $('.database__contols .start-process').removeClass('spinner').text('Finished');
+            $('.database__contols .start-process')
+                .removeClass('spinner')
+                .text('Start process')
+                .prop("disabled", false);
+
             alert('Успех');
-            $.pjax.reload({container:'#left-database'});
-            $.pjax.reload({container:'#right-database'});
+            $.pjax.reload({container:'#left-database-pjax-id', async: false});
+            $.pjax.reload({container:'#right-database-pjax-id', async: false});
         }
         else {
             alert('Error: ' + data.error.message);
