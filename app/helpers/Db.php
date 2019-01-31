@@ -83,7 +83,7 @@ class Db
 
         $command = 'mysqldump --host=' . self::getDsnAttribute('host', $db->dsn) .
             ' --user=' . $db->username . ' --password=' . $db->password . ' ' .
-            self::getDsnAttribute('dbname', $db->dsn) . ' --skip-add-locks > ' . $filePath;
+            self::getDsnAttribute('dbname', $db->dsn) . ' ' . $table . ' --skip-add-locks > ' . $filePath;
         $output = $return_var = null;
 
         exec($command, $output, $return_var);

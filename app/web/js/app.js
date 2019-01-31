@@ -28,7 +28,7 @@ $( document ).ready(function() {
         };
 
         $.post(
-            "/database/process",
+            location.href.split('/database/index')[0] + "/database/process",
             params,
             onDatabaseProcessed
         );
