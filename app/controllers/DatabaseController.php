@@ -115,6 +115,15 @@ class DatabaseController extends Controller
                 }
             }
         }
+        else {
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'argument error',
+                    'message' => 'left_tables param is not set'
+                ]
+            ];
+        }
 
 //        var_dump(Yii::$app->request->post('left_tables'));
 //        var_dump(Yii::$app->request->post('right_tables'));

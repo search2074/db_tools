@@ -28,7 +28,7 @@ $( document ).ready(function() {
         };
 
         $.post(
-            location.href.split('/database/index')[0] + "/database/process",
+            "database/process",
             params,
             onDatabaseProcessed
         );
@@ -36,17 +36,17 @@ $( document ).ready(function() {
 
     function onDatabaseProcessed(data) {
         if(data.success){
-            $('.database__contols .start-process')
-                .removeClass('spinner')
-                .text('Start process')
-                .prop("disabled", false);
-
-            alert('Успех');
             $.pjax.reload({container:'#left-database-pjax-id', async: false});
             $.pjax.reload({container:'#right-database-pjax-id', async: false});
+            alert('Успех');
         }
         else {
             alert('Error: ' + data.error.message);
         }
+
+        $('.database__contols .start-process')
+            .removeClass('spinner')
+            .text('Start process')
+            .prop("disabled", false);
     }
 });
