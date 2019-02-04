@@ -9,6 +9,7 @@ namespace app\assets;
 
 use Yii;
 use yii\web\AssetBundle;
+use yii\helpers\FileHelper;
 
 /**
  * Main application asset bundle.
@@ -37,6 +38,28 @@ class AppAsset extends AssetBundle
 
         if (!empty(Yii::$app->params['baseUrl'])) {
             $this->baseUrl = Yii::$app->params['baseUrl'];
+        }
+
+        $this->setVersioned('css');
+        $this->setVersioned('js');
+    }
+
+    /**
+     * Add versioned label to resources files
+     * @param string $property
+     */
+    private function setVersioned($property = 'css'){
+        if(empty($this->$property)){
+            return;
+        }
+
+        foreach ($this->$property as $i => $value) {
+            $file_path = FileHelper::normalizePath(Yii::getAlias($this->basePath . DIRECTORY_SEPARATOR . $value));
+
+            if(file_exists($file_path)){
+                $hash = hash_file('crc32', $file_path);
+                $this->$property[$i] = "{$value}?v={$hash}";
+            }
         }
     }
 }
