@@ -6,7 +6,7 @@ $( document ).ready(function() {
     function getSelectedTables(id){
         var values = [];
         $('#'+id).find("input[name='selection[]']:checked").each(function () {
-            values.push($(this).parents('tr').find('.table-name').text());
+            values.push($(this).parents('tr').find('.table-name__title').text());
         });
 
         return values;

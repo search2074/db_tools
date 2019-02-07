@@ -141,7 +141,7 @@ a.desc:after {
 }
 
 .database__debug {
-    display: none;
+    /*display: none;*/
 }
 
 .database__contols {
@@ -172,4 +172,29 @@ a.desc:after {
     border: 2px solid #ccc;
     border-top-color: #333;
     animation: spinner .6s linear infinite;
+}
+
+.database__notes-new_table .square {
+    background-color: #dff0d8;
+}
+
+.database__notes-edit-schema-table .square {
+    background-color: #fcf8e3;
+}
+
+.database__notes-delete_table .square {
+    background-color: #ffc6c6;
+}
+
+.database__notes-new_table .square, .database__notes-edit-schema-table .square, .database__notes-delete_table .square {
+    border: 1px solid #ccc;
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+}
+
+.database__notes-new_table .text, .database__notes-edit-schema-table .text, .database__notes-delete_table .text {
+    display: inline-block;
+    position: relative;
+    top: -3px;
 }

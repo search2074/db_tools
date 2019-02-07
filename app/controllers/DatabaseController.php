@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\services\DatabaseService;
+use app\services\DatabaseCompareService;
 
 
 class DatabaseController extends Controller
@@ -63,22 +64,27 @@ class DatabaseController extends Controller
     public function actionIndex()
     {
         $leftDatabaseService = new DatabaseService('left_db');
-        $leftDbDataProvider = $leftDatabaseService->getDataProvider();
         $rightDatabaseService = new DatabaseService('right_db');
-        $rightDbDataProvider = $rightDatabaseService->getDataProvider();
-        $leftDatabaseDiff = $leftDatabaseService->getDiff($rightDbDataProvider);
-        $rightDatabaseDiff = $rightDatabaseService->getDiff($leftDbDataProvider);
+        $dbCompareService = new DatabaseCompareService($leftDatabaseService, $rightDatabaseService);
+        $dbCompareService->compare();
 
         return $this->render('index', [
-            'leftDbDataProvider' => $leftDbDataProvider,
-            'rightDbDataProvider' => $rightDbDataProvider,
-            'leftDatabaseDiff' => $leftDatabaseDiff,
-            'rightDatabaseDiff' => $rightDatabaseDiff
+            'dbCompareService' => $dbCompareService,
         ]);
     }
 
     public function actionProcess(){
         Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if(empty(Yii::$app->request->post('left_tables')) && empty(Yii::$app->request->post('right_tables'))){
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'argument error',
+                    'message' => 'wrong params'
+                ]
+            ];
+        }
 
         if(!empty(Yii::$app->request->post('left_tables'))){
             foreach (Yii::$app->request->post('left_tables') as $table) {
