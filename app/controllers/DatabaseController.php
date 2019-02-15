@@ -4,11 +4,13 @@ namespace app\controllers;
 
 use Yii;
 use app\helpers\Db;
+use yii\db\Exception;
 use yii\web\Response;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\services\DatabaseService;
+use app\services\TableCompareService;
 use app\services\DatabaseCompareService;
 
 
@@ -36,6 +38,7 @@ class DatabaseController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'process' => ['post'],
+                    'compare-table-data' => ['get'],
                 ],
             ],
         ];
@@ -137,5 +140,31 @@ class DatabaseController extends Controller
         return [
             'success' => true
         ];
+    }
+
+    public function actionCompareTableData($source_database, $table_name){
+        if(empty($source_database) || empty($table_name)){
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'argument error',
+                    'message' => 'wrong params'
+                ]
+            ];
+        }
+
+        try {
+            $leftDatabaseService = new DatabaseService('left_db');
+            $rightDatabaseService = new DatabaseService('right_db');
+            $tableCompareService = new TableCompareService($leftDatabaseService, $rightDatabaseService);
+            $tableCompareService->compare($source_database, $table_name);
+
+            return $this->renderAjax('compare_table_data', [
+                'tableCompareService' => $tableCompareService,
+            ]);
+        }
+        catch (Exception $error){
+            var_dump($error);die;
+        }
     }
 }

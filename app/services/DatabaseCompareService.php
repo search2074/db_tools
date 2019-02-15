@@ -2,7 +2,9 @@
 
 namespace app\services;
 
+use Yii;
 use app\helpers\Db;
+use yii\helpers\ArrayHelper;
 use yii\data\ArrayDataProvider;
 use app\services\DatabaseService;
 
@@ -76,6 +78,9 @@ class DatabaseCompareService
 
         ksort($allTables);
 
+        $leftTablesData = $this->getTablesData('left_db');
+        $rightTablesData = $this->getTablesData('right_db');
+
         foreach ($allTables as $table => $fields) {
             $allTableColumns = [];
             $leftTableColumns = $rightTableColumns = [];
@@ -102,6 +107,8 @@ class DatabaseCompareService
                 $this->comparedTables['left_db'][$table] = [
                     'created_table' => false,
                     'edited_schema_table' => false,
+                    'edited_table_data' => false,
+                    'table_data_diff' => [],
                     'deleted_table' => false,
                     'columns' => $leftTableColumns,
                     'columns_diff' => [],
@@ -123,11 +130,23 @@ class DatabaseCompareService
                         $this->comparedTables['left_db'][$table]['columns_diff'] = $columnsDiff;
                     }
                 }
+
+                // diff data
+                if(!empty($leftTablesData[$table]) && !empty($rightTablesData[$table])){
+                    $data_diff = array_diff($leftTablesData[$table], $rightTablesData[$table]);
+
+                    if(!empty($data_diff)){
+                        $this->comparedTables['left_db'][$table]['edited_table_data'] = true;
+                        $this->comparedTables['left_db'][$table]['table_data_diff'] = $data_diff;
+                    }
+                }
             }
 
             if(!empty($rightTableColumns)){
                 $this->comparedTables['right_db'][$table] = [
                     'created_table' => false,
+                    'edited_table_data' => false,
+                    'table_data_diff' => [],
                     'edited_schema_table' => false,
                     'deleted_table' => false,
                     'columns' => $rightTableColumns,
@@ -150,6 +169,16 @@ class DatabaseCompareService
                         $this->comparedTables['right_db'][$table]['columns_diff'] = $columnsDiff;
                     }
                 }
+
+                // diff data
+                if(!empty($leftTablesData[$table]) && !empty($rightTablesData[$table])){
+                    $data_diff = array_diff($rightTablesData[$table], $leftTablesData[$table]);
+
+                    if(!empty($data_diff)){
+                        $this->comparedTables['right_db'][$table]['edited_table_data'] = true;
+                        $this->comparedTables['right_db'][$table]['table_data_diff'] = $data_diff;
+                    }
+                }
             }
 
 //            echo "left table:\n";
@@ -163,10 +192,10 @@ class DatabaseCompareService
 
 //            echo "table: {$table}\n";
 //            echo "fields: \n";
-//            var_dump($allTableColumns);
-//            die;
         }
 
+//        var_dump($this->comparedTables);
+//        die;
         return $this->comparedTables;
     }
 
@@ -251,6 +280,33 @@ class DatabaseCompareService
         }
 
         return $this->counters[$db][$type];
+    }
+
+    private function getTablesData($db){
+        $tables = Yii::$app->$db->createCommand('
+          SELECT 
+            TABLE_CATALOG,
+            TABLE_NAME,
+            TABLE_TYPE,
+            ENGINE,
+            VERSION,
+            ROW_FORMAT,
+            TABLE_ROWS,
+            AVG_ROW_LENGTH,
+            DATA_LENGTH,
+            MAX_DATA_LENGTH,
+            INDEX_LENGTH,
+            DATA_FREE,
+            AUTO_INCREMENT,
+            TABLE_COLLATION,
+            TABLE_COMMENT
+          FROM information_schema.TABLES 
+          WHERE TABLE_CATALOG = "def" and TABLE_SCHEMA = :datebase
+        ', [
+            ':datebase' => DatabaseService::getDbName(Yii::$app->$db->dsn)
+        ])->queryAll();
+
+        return ArrayHelper::index($tables, function($row){ return $row['TABLE_NAME']; });
     }
 
     public function getLeftDbCountNewTables(){

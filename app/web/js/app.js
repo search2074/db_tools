@@ -49,4 +49,69 @@ $( document ).ready(function() {
             .text('Start process')
             .prop("disabled", false);
     }
+
+    $('.database__list').on('click', '.view-table-data-diff-btn', function(){
+        var params = {
+            source_database: this.dataset.source_database,
+            table_name: this.dataset.table_name
+        };
+
+        $.get(
+            "database/compare-table-data",
+            params,
+            onTableDataCompared.bind(this, params)
+        );
+    });
+
+    function onTableDataCompared(params, html) {
+        // debugger;
+        var $modal = $('#database__modal');
+
+        $modal.find('.modal-body').html(html);
+        $modal.find('.modal-header h2').text('Изменения данных в таблице ' + params.table_name);
+        $modal.modal('show');
+    }
+
+    $(document).on('click', '.table__contols .start-process', function () {
+        var records = getSelectedRecords('left-table');
+
+        Array.prototype.push.apply(records, getSelectedRecords('right-table'));
+
+        debugger;
+
+        //records getSelectedRecords('right-table');
+
+        var $modal = $('#table-confirm__modal');
+
+        //$modal.find('.modal-body').html();
+        $modal.modal('show');
+
+    });
+
+    function getSelectedRecords(id) {
+        var records = [];
+
+        $('#'+id).find("input[name='selection[]']:checked").each(function () {
+            var operation = null;
+
+            if($(this).parents('tr').hasClass('record-modified')){
+                operation = 'update';
+            }
+            else if($(this).parents('tr').hasClass('record-dropped')){
+                operation = 'drop';
+            }
+            else if($(this).parents('tr').hasClass('record-insert')){
+                operation = 'insert';
+            }
+
+            if(operation){
+                records.push({
+                    operation: operation,
+                    num: this.value
+                });
+            }
+        });
+
+        return records;
+    }
 });

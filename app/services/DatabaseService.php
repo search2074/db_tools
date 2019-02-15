@@ -6,6 +6,7 @@ use Yii;
 use app\helpers\Db;
 use yii\db\Exception;
 use yii\data\ArrayDataProvider;
+use yii\helpers\ArrayHelper;
 
 class DatabaseService
 {
@@ -124,5 +125,26 @@ class DatabaseService
         }
 
         return $tables;
+    }
+
+    public function getTableColumns($table_name){
+        $db = $this->db;
+
+        $columns = Yii::$app->$db
+            ->createCommand('
+              SELECT cols.TABLE_CATALOG, cols.TABLE_SCHEMA, cols.TABLE_NAME, cols.COLUMN_NAME
+              FROM information_schema.COLUMNS cols 
+              WHERE cols.TABLE_CATALOG = :table_catalog and cols.TABLE_SCHEMA = :table_schema and cols.TABLE_NAME = :db_table_name
+            ', [
+                ':table_catalog' => 'def',
+                ':table_schema' => self::getDbName(Yii::$app->$db->dsn),
+                ':db_table_name' => $table_name,
+            ])->queryAll();
+
+        if(empty($columns)){
+            return [];
+        }
+
+        return ArrayHelper::getColumn($columns, function($item){ return $item['COLUMN_NAME']; });
     }
 }

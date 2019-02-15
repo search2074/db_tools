@@ -1,8 +1,9 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\grid\GridView;
+use yii\bootstrap\Modal;
 use app\helpers\GridViewHelper;
 use app\services\DatabaseService;
 
@@ -34,36 +35,28 @@ $this->params['breadcrumbs'][] = 'Database';
             'id' => 'left-database',
             'dataProvider' => $dbCompareService->getLeftDbDataProvider(),
             'pager' => ['maxButtonCount' => 5],
-            'rowOptions'=>function($data, $table_name) {
-                if($data['created_table']){
-                    return [
-                        'title' => 'новая таблица',
-                        'class' => 'success'
-                    ];
-                }
-                elseif($data['edited_schema_table']) {
-                    return [
-                        'title' => 'изменения в схеме относительно получателя',
-                        'class' => 'warning'
-                    ];
-                }
-                elseif($data['deleted_table']) {
-                    return [
-                        'title' => 'таблица удалена в источнике',
-                        'class' => 'danger'
-                    ];
-                }
+            'rowOptions'=>function($data, $table_name, $index, $grid) {
+                return GridViewHelper::dbTableRowRenderer($data, $table_name, $index, $grid);
             },
             'columns' => [
-                ['class' => 'yii\grid\CheckboxColumn',],
-                    ['class' => 'yii\grid\SerialColumn'],
                 [
-                    'label' =>"Название таблицы",
-                    'contentOptions' => ['class' => 'table-name'],
+                    'class' => 'yii\grid\CheckboxColumn',
+                ],
+                [
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                [
+                    'label' => "Название таблицы",
+                    'options' => [
+                        'database' => 'left_db'
+                    ],
+                    'contentOptions' => [
+                        'class' => 'table-name'
+                    ],
                     'attribute' => 'title',
                     'format' => 'raw',
-                    'value' => function($data, $table_name){
-                        return GridViewHelper::dbTableColumnRenderer($data, $table_name);
+                    'value' => function($data, $table_name, $index, $grid){
+                        return GridViewHelper::dbTableColumnRenderer($data, $table_name, $index, $grid);
                     }
                 ],
             ],
@@ -97,36 +90,28 @@ $this->params['breadcrumbs'][] = 'Database';
             'id' => 'right-database',
             'dataProvider' => $dbCompareService->getRightDbDataProvider(),
             'pager' => ['maxButtonCount' => 5],
-            'rowOptions'=>function($data, $table_name) {
-                if($data['created_table']){
-                    return [
-                        'title' => 'новая таблица',
-                        'class' => 'success'
-                    ];
-                }
-                elseif($data['edited_schema_table']) {
-                    return [
-                        'title' => 'изменения в схеме относительно источника',
-                        'class' => 'warning'
-                    ];
-                }
-                elseif($data['deleted_table']) {
-                    return [
-                        'title' => 'таблица удалена в источнике',
-                        'class' => 'danger'
-                    ];
-                }
+            'rowOptions'=>function($data, $table_name, $index, $grid) {
+                return GridViewHelper::dbTableRowRenderer($data, $table_name, $index, $grid);
             },
             'columns' => [
-                ['class' => 'yii\grid\CheckboxColumn',],
-                ['class' => 'yii\grid\SerialColumn'],
                 [
-                    'label' =>"Название таблицы",
-                    'contentOptions' => ['class' => 'table-name'],
+                    'class' => 'yii\grid\CheckboxColumn',
+                ],
+                [
+                    'class' => 'yii\grid\SerialColumn'
+                ],
+                [
+                    'label' => "Название таблицы",
+                    'options' => [
+                        'database' => 'right_db'
+                    ],
+                    'contentOptions' => [
+                        'class' => 'table-name'
+                    ],
                     'attribute' => 'title',
                     'format' => 'raw',
-                    'value' => function($data, $table_name){
-                        return GridViewHelper::dbTableColumnRenderer($data, $table_name);
+                    'value' => function($data, $table_name, $index, $grid){
+                        return GridViewHelper::dbTableColumnRenderer($data, $table_name, $index, $grid);
                     }
                 ],
             ],
@@ -150,9 +135,17 @@ $this->params['breadcrumbs'][] = 'Database';
         <span class="square"></span>
         <div class="text">- изменения в схеме таблицы</div>
     </div>
+    <div class="database__notes-edit-data-table">
+        <span class="square"></span>
+        <div class="text">- изменения в данных таблицы</div>
+    </div>
+    <div class="database__notes-edit-schema-and-data-table">
+        <span class="square"></span>
+        <div class="text">- изменения в схеме и данных таблицы</div>
+    </div>
     <div class="database__notes-delete_table">
         <span class="square"></span>
-        <div class="text">- удалена таблица</div>
+        <div class="text">- таблица удалена</div>
     </div>
 </div>
 <div class="database__debug">
@@ -165,4 +158,30 @@ $this->params['breadcrumbs'][] = 'Database';
 
         ?>
     </pre>
+</div>
+<div class="database__modals">
+    <?php
+    Modal::begin([
+        'options' => [
+            'id' => 'database__modal'
+        ],
+        'header' => '<h2>Изменения данных в таблице</h2>',
+        'toggleButton' => false,
+        'footer' => 'Низ окна',
+    ]);
+
+    Modal::end();
+    ?>
+    <?php
+    Modal::begin([
+        'options' => [
+            'id' => 'table-confirm__modal'
+        ],
+        'header' => '<h2>Изменения:</h2>',
+        'toggleButton' => false,
+        'footer' => 'Низ окна',
+    ]);
+
+    Modal::end();
+    ?>
 </div>
