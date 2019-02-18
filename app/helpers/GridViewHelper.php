@@ -124,24 +124,31 @@ class GridViewHelper {
     }
 
     public static function tableRecordRowRenderer($data, $pk, $index, GridView $grid){
+        $result = [];
+
+        if(!empty($data['__pk'])){
+            $result['data-pk'] = $data['__pk'];
+        }
+
         if(!empty($data['__record_new'])){
-            return [
+            $result += [
                 'title' => 'новая запись',
-                'class' => 'success record-insert'
+                'class' => 'success record-insert',
             ];
         }
         elseif(!empty($data['__record_drop'])) {
-            return [
+            $result += [
                 'title' => 'запись удалена',
-                'class' => 'danger record-dropped'
+                'class' => 'danger record-dropped',
             ];
         }
         elseif(!empty($data['__record_modify'])) {
-            return [
+            $result += [
                 'title' => 'изменения в записи',
                 'class' => 'record-modified',
-
             ];
         }
+
+        return $result;
     }
 }

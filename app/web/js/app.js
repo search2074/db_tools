@@ -12,6 +12,69 @@ $( document ).ready(function() {
         return values;
     }
 
+    function getSelectedRecords(id) {
+        var records = [];
+
+        $('#'+id).find("input[name='selection[]']:checked").each(function () {
+            if($(this).parents('.record-modified').length && $(this).parents('#right-table').length){
+                return true;
+            }
+
+            var operation = null,
+                $tr = $(this).parents('tr'),
+                pk = $tr.data('pk');
+
+            if($tr.hasClass('record-modified')){
+                operation = 'update';
+            }
+            else if($tr.hasClass('record-dropped')){
+                operation = 'drop';
+            }
+            else if($tr.hasClass('record-insert')){
+                operation = 'insert';
+            }
+
+            if(operation){
+                records.push({
+                    operation: operation,
+                    pk: pk,
+                    num: this.value
+                });
+            }
+        });
+
+        return records;
+    }
+
+    function onTableDataCompared(params, html) {
+        $databaseModal.find('.modal-body').html(html);
+    }
+
+    function onDatabaseProcessed(data) {
+        if(data.success){
+            $.pjax.reload({container:'#left-database-pjax-id', async: false});
+            $.pjax.reload({container:'#right-database-pjax-id', async: false});
+            alert('Успех');
+        }
+        else {
+            alert('Error: ' + data.error.message);
+        }
+
+        $('.database__contols .start-process')
+            .removeClass('spinner')
+            .text('Start process')
+            .prop("disabled", false);
+    }
+
+    function onTableDataProcessed(data) {
+        console.log(data);
+    }
+
+    var $databaseModal = $('#database__modal');
+    var $tableConfirmModal = $('#table-confirm__modal');
+    var tableName = "";
+    var rowRecords = [];
+
     $('.database__list').on('click', "input[name='selection[]']", function (e) {
         if($(this).parents('#right-database').length){
             alert('Действие запрещено');
@@ -34,26 +97,16 @@ $( document ).ready(function() {
         );
     });
 
-    function onDatabaseProcessed(data) {
-        if(data.success){
-            $.pjax.reload({container:'#left-database-pjax-id', async: false});
-            $.pjax.reload({container:'#right-database-pjax-id', async: false});
-            alert('Успех');
-        }
-        else {
-            alert('Error: ' + data.error.message);
-        }
-
-        $('.database__contols .start-process')
-            .removeClass('spinner')
-            .text('Start process')
-            .prop("disabled", false);
-    }
-
     $('.database__list').on('click', '.view-table-data-diff-btn', function(){
+        tableName = this.dataset.table_name;
+
+        $databaseModal.find('.modal-header h2').text('Изменения данных в таблице ' + tableName);
+        $databaseModal.find('.modal-body').html("");
+        $databaseModal.modal('show');
+
         var params = {
             source_database: this.dataset.source_database,
-            table_name: this.dataset.table_name
+            table_name: tableName
         };
 
         $.get(
@@ -63,55 +116,46 @@ $( document ).ready(function() {
         );
     });
 
-    function onTableDataCompared(params, html) {
-        // debugger;
-        var $modal = $('#database__modal');
-
-        $modal.find('.modal-body').html(html);
-        $modal.find('.modal-header h2').text('Изменения данных в таблице ' + params.table_name);
-        $modal.modal('show');
-    }
-
     $(document).on('click', '.table__contols .start-process', function () {
-        var records = getSelectedRecords('left-table');
+        rowRecords = getSelectedRecords('left-table');
+        Array.prototype.push.apply(rowRecords, getSelectedRecords('right-table'));
 
-        Array.prototype.push.apply(records, getSelectedRecords('right-table'));
+        if(!rowRecords.length) {
+            return false;
+        }
 
-        debugger;
+        var text = "";
 
-        //records getSelectedRecords('right-table');
-
-        var $modal = $('#table-confirm__modal');
-
-        //$modal.find('.modal-body').html();
-        $modal.modal('show');
-
-    });
-
-    function getSelectedRecords(id) {
-        var records = [];
-
-        $('#'+id).find("input[name='selection[]']:checked").each(function () {
-            var operation = null;
-
-            if($(this).parents('tr').hasClass('record-modified')){
-                operation = 'update';
-            }
-            else if($(this).parents('tr').hasClass('record-dropped')){
-                operation = 'drop';
-            }
-            else if($(this).parents('tr').hasClass('record-insert')){
-                operation = 'insert';
-            }
-
-            if(operation){
-                records.push({
-                    operation: operation,
-                    num: this.value
-                });
+        $.each(rowRecords, function (i, record) {
+            switch(record.operation){
+                case 'update':
+                    text += "обновить запись " + record.pk + ": " + record.num + "\n";
+                    break;
+                case 'insert':
+                    text += "вставить запись " + record.pk + ": " + record.num + "\n";
+                    break;
+                case 'drop':
+                    text += "удалить запись " + record.pk + ": " + record.num + "\n";
+                    break;
             }
         });
 
-        return records;
-    }
+        if(text.length){
+            $tableConfirmModal.find('.modal-body .table-changes__textbox').text(text);
+            $tableConfirmModal.modal('show');
+        }
+    });
+
+    $(document).on('click', '.start-process__row-data', function(){
+        var params = {
+            records: rowRecords,
+            table_name: tableName
+        };
+
+        $.post(
+            "database/process-table-data",
+            params,
+            onTableDataProcessed
+        );
+    });
 });

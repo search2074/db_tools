@@ -39,6 +39,7 @@ class DatabaseController extends Controller
                 'actions' => [
                     'process' => ['post'],
                     'compare-table-data' => ['get'],
+                    'process-table-data' => ['post'],
                 ],
             ],
         ];
@@ -134,9 +135,6 @@ class DatabaseController extends Controller
             ];
         }
 
-//        var_dump(Yii::$app->request->post('left_tables'));
-//        var_dump(Yii::$app->request->post('right_tables'));
-
         return [
             'success' => true
         ];
@@ -164,7 +162,61 @@ class DatabaseController extends Controller
             ]);
         }
         catch (Exception $error){
-            var_dump($error);die;
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'error',
+                    'message' => $error->getMessage()
+                ]
+            ];
+        }
+    }
+
+    public function actionProcessTableData(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if(!Yii::$app->request->post('table_name') || empty(Yii::$app->request->post('records'))){
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'argument error',
+                    'message' => 'wrong params'
+                ]
+            ];
+        }
+
+        try {
+            $leftDatabaseService = new DatabaseService('left_db');
+            $rightDatabaseService = new DatabaseService('right_db');
+
+            $records = $leftDatabaseService->prepareSqlForTableRecords(
+                Yii::$app->request->post('table_name'),
+                Yii::$app->request->post('records')
+            );
+
+            // start process on right table
+            $rightDatabaseService->processTableData($records);
+
+            $records = $rightDatabaseService->prepareSqlForTableRecords(
+                Yii::$app->request->post('table_name'),
+                Yii::$app->request->post('records')
+            );
+
+            // start process on right table
+            $rightDatabaseService->processTableData($records);
+
+            return [
+                'success' => true
+            ];
+        }
+        catch (Exception $error){
+            return [
+                'success' => false,
+                'error' => [
+                    'type' => 'error',
+                    'message' => $error->getMessage()
+                ]
+            ];
         }
     }
 }

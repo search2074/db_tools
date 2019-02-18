@@ -147,4 +147,78 @@ class DatabaseService
 
         return ArrayHelper::getColumn($columns, function($item){ return $item['COLUMN_NAME']; });
     }
+
+    /**
+     * Prepare sql queries for records
+     * @param $table_name
+     * @param $records
+     * @return mixed
+     */
+    public function prepareSqlForTableRecords($table_name, $records){
+        $db = $this->db;
+
+        foreach ($records as $i => $record) {
+            if(in_array($record['operation'], ['update', 'insert', 'drop'])){
+                $data = Yii::$app->$db
+                    ->createCommand("
+                      SELECT *
+                      FROM `{$table_name}` 
+                      WHERE `".$record['pk']."` = :num
+                    ", [
+                        ':num' => $record['num'],
+                    ])->queryOne();
+
+                if(!empty($data)){
+                    $records[$i]['data'] = $data;
+
+                    if($this->db === 'left_db' && $record['operation'] === 'insert'){
+                        $columns = array_keys($data);
+                        $records[$i]['sql'] = "INSERT INTO `{$table_name}` (`" . implode('`,`', $columns) . "`) VALUES ('" .
+                            implode("','", $data) . "');";
+                    }
+                    else if($this->db === 'left_db' && $record['operation'] === 'update'){
+                        $fields = [];
+
+                        foreach ($data as $column_name => $column_value) {
+                            $fields[] = "`{$column_name}` = '{$column_value}'";
+                        }
+
+                        $records[$i]['sql'] = "UPDATE `{$table_name}` SET " . implode(', ', $fields) . " WHERE `" .
+                            $record['pk'] . "` = '".$record['num']."';";
+                    }
+                    else if($this->db === 'right_db' && $record['operation'] === 'drop'){
+                        $records[$i]['sql'] = "DELETE FROM `{$table_name}` WHERE `" . $record['pk'] . "` = '".$record['num']."';";
+                    }
+                }
+            }
+        }
+
+        return $records;
+    }
+
+    /**
+     * @param $records
+     * @return bool
+     * @throws Exception
+     */
+    public function processTableData($records){
+        if(empty($records)){
+            throw new Exception("Empty data");
+        }
+
+        $db = $this->db;
+
+        foreach ($records as $record) {
+            if(!empty($record['sql'])){
+//                echo "db: {$db}, query: ".$record['sql']."\n";continue;
+                $result = Yii::$app->$db->createCommand($record['sql'])->execute();
+
+                if(!$result){
+                    throw new Exception("Error executing query: " . $record['sql']);
+                }
+            }
+        }
+
+        return true;
+    }
 }

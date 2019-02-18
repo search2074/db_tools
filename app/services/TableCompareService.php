@@ -87,6 +87,14 @@ class TableCompareService
         $all = $this->comparedData['left_db'] + $this->comparedData['right_db'];
 
         foreach ($all as $pk => $row) {
+            if(!empty($this->comparedData['left_db'][$pk])){
+                $this->comparedData['left_db'][$pk]['__pk'] = $this->comparedData['pk'];
+            }
+
+            if(!empty($this->comparedData['right_db'][$pk])){
+                $this->comparedData['right_db'][$pk]['__pk'] = $this->comparedData['pk'];
+            }
+
             if(!empty($this->comparedData['left_db'][$pk]) && empty($this->comparedData['right_db'][$pk])){
                 $this->comparedData['left_db'][$pk]['__record_new'] = true;
             }

@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = 'Compare table data';
 ?>
 
 <div class="table__list">
-    <div class="table-left__list col-md-5">
+    <div class="table-left__list col-md-6">
         <?php \yii\widgets\Pjax::begin([
             'id' => 'left-table-pjax-id'
         ]); ?>
@@ -29,14 +29,7 @@ $this->params['breadcrumbs'][] = 'Compare table data';
         ]); ?>
         <?php \yii\widgets\Pjax::end(); ?>
     </div>
-    <div class="table-separator__list col-md-2">
-        <div class="table-separator__diagram">
-            <div class="table-separator__left_table" title="Источник"></div>
-            <div class="table-separator__arrow"></div>
-            <div class="table-separator__right_table" title="Получатель"></div>
-        </div>
-    </div>
-    <div class="table-right__list col-md-5">
+    <div class="table-right__list col-md-6">
         <?php \yii\widgets\Pjax::begin([
             'id' => 'right-table-pjax-id'
         ]); ?>

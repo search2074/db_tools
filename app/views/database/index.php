@@ -172,16 +172,16 @@ $this->params['breadcrumbs'][] = 'Database';
 
     Modal::end();
     ?>
-    <?php
-    Modal::begin([
+    <?php Modal::begin([
         'options' => [
             'id' => 'table-confirm__modal'
         ],
-        'header' => '<h2>Изменения:</h2>',
+        'header' => '<h2>Применить изменения</h2>',
         'toggleButton' => false,
-        'footer' => 'Низ окна',
-    ]);
+        'footer' => '<button class="start-process__row-data btn btn-success" type="submit">Apply</button>',
+    ]); ?>
 
-    Modal::end();
-    ?>
+    <textarea class="table-changes__textbox"></textarea>
+
+    <?php Modal::end(); ?>
 </div>

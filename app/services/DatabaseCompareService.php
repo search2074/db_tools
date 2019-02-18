@@ -136,6 +136,10 @@ class DatabaseCompareService
                     $data_diff = array_diff($leftTablesData[$table], $rightTablesData[$table]);
 
                     if(!empty($data_diff)){
+//                        var_dump($leftTablesData[$table]);
+//                        var_dump($rightTablesData[$table]);
+//
+//                        var_dump($data_diff);
                         $this->comparedTables['left_db'][$table]['edited_table_data'] = true;
                         $this->comparedTables['left_db'][$table]['table_data_diff'] = $data_diff;
                     }

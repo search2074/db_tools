@@ -257,4 +257,21 @@ a.desc:after {
 
 .table-right__list tr.success input[type="checkbox"], .table-right__list tr.record-modified input[type="checkbox"] {
     display: none;
+    pointer-events: none
+}
+
+#left-table table, #right-table table {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+    height: 70vh;
+}
+
+#right-database .view-table-data-diff-btn {
+    display: none;
+}
+
+.table-changes__textbox {
+    width: 100%;
+    height: 150px;
 }
