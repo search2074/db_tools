@@ -69,6 +69,8 @@ class DatabaseController extends Controller
     {
         $leftDatabaseService = new DatabaseService('left_db');
         $rightDatabaseService = new DatabaseService('right_db');
+        $leftDatabaseService->analyzeTables();
+        $rightDatabaseService->analyzeTables();
         $dbCompareService = new DatabaseCompareService($leftDatabaseService, $rightDatabaseService);
         $dbCompareService->compare();
 
@@ -95,6 +97,10 @@ class DatabaseController extends Controller
                 try {
                     Db::export('left_db', $table);
                     Db::import('right_db', $table);
+                    $leftDatabaseService = new DatabaseService('left_db');
+                    $rightDatabaseService = new DatabaseService('right_db');
+                    $leftDatabaseService->analyzeTables();
+                    $rightDatabaseService->analyzeTables();
                 }
                 catch (\yii\db\Exception $exception){
                     return [
@@ -204,6 +210,9 @@ class DatabaseController extends Controller
 
             // start process on right table
             $rightDatabaseService->processTableData($records);
+
+            $leftDatabaseService->analyzeTables();
+            $rightDatabaseService->analyzeTables();
 
             return [
                 'success' => true

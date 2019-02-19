@@ -30,7 +30,6 @@ class DatabaseService
         $this->db = $db;
     }
 
-
     public function getTables(){
         $db = $this->db;
 
@@ -220,5 +219,18 @@ class DatabaseService
         }
 
         return true;
+    }
+
+    public function analyzeTables(){
+        $tables = $this->getTables();
+
+        if(empty($tables)){
+            return $this;
+        }
+
+        $db = $this->db;
+        Yii::$app->$db->createCommand("ANALYZE TABLE `" . implode('`,`', $tables) . "`;")->execute();
+
+        return $this;
     }
 }

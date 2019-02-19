@@ -303,7 +303,8 @@ class DatabaseCompareService
             DATA_FREE,
             AUTO_INCREMENT,
             TABLE_COLLATION,
-            TABLE_COMMENT
+            TABLE_COMMENT,
+            UPDATE_TIME
           FROM information_schema.TABLES 
           WHERE TABLE_CATALOG = "def" and TABLE_SCHEMA = :datebase
         ', [
@@ -335,5 +336,29 @@ class DatabaseCompareService
 
     public function getRightDbCountEditedSchemaTables(){
         return $this->getCountTables('right_db', 'edited_schema_table');
+    }
+
+    public function getLeftDbTableDataDiff(){
+        return $this->getDbTableDataDiff('left_db');
+    }
+
+    public function getRightDbTableDataDiff(){
+        return $this->getDbTableDataDiff('right_db');
+    }
+
+    private function getDbTableDataDiff($db = 'left_db'){
+        if(empty($this->comparedTables[$db])){
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($this->comparedTables[$db] as $tableName => $comparedTable) {
+            if(!empty($comparedTable['table_data_diff'])){
+                $result[$tableName] = $comparedTable['table_data_diff'];
+            }
+        }
+
+        return $result;
     }
 }
