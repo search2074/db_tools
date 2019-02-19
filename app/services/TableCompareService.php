@@ -77,7 +77,15 @@ class TableCompareService
             $rightDb,
             function($row)use($rightPrimaryKey){ return $row[$rightPrimaryKey]; }
         );
-        $this->comparedData['columns'] = array_keys($leftDb[0]);
+        $this->comparedData['columns'] = [];
+
+        if(!empty($leftDb)){
+            $this->comparedData['columns'] = array_keys($leftDb[0]);
+        }
+        elseif(!empty($rightDb)){
+            $this->comparedData['columns'] = array_keys($rightDb[0]);
+        }
+
         $this->adaptationComparedData();
 
         return $this->comparedData;
@@ -291,5 +299,10 @@ class TableCompareService
 
     public function getRightDbDataProvider(){
         return $this->getDataProvider('right_db');
+    }
+
+    public function hasChanges($db = 'left_db'){
+        return !empty($this->getLeftDbDataProvider()->getModels()[$db])
+            && count($this->getLeftDbDataProvider()->getModels()[$db]) > 0;
     }
 }

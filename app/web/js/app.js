@@ -67,7 +67,17 @@ $( document ).ready(function() {
     }
 
     function onTableDataProcessed(data) {
-        console.log(data);
+        if(data.success){
+            $.pjax.reload({container:'#left-table-pjax-id', async: false});
+            $.pjax.reload({container:'#right-table-pjax-id', async: false});
+            $.pjax.reload({container:'#left-database-pjax-id', async: false});
+            $.pjax.reload({container:'#right-database-pjax-id', async: false});
+            $tableConfirmModal.modal('hide');
+            alert('Успех');
+        }
+        else {
+            alert('Error: ' + data.error.message);
+        }
     }
 
     var $databaseModal = $('#database__modal');
@@ -113,7 +123,8 @@ $( document ).ready(function() {
             "database/compare-table-data",
             params,
             onTableDataCompared.bind(this, params)
-        );
+        )
+            .fail(function(){alert("fatal error");});
     });
 
     $(document).on('click', '.table__contols .start-process', function () {

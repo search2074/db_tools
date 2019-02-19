@@ -150,8 +150,11 @@ a.desc:after {
 }
 
 .start-process {
-    width: 100%;
     position: relative;
+}
+
+.database__contols .start-process {
+    width: 100%;
 }
 
 @keyframes spinner {

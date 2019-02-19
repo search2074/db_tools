@@ -112,7 +112,11 @@ class GridViewHelper {
                         ]);
                     }
 
-                    return $row[$column->attribute];
+                    if(!empty($row[$column->attribute])){
+                        return $row[$column->attribute];
+                    }
+
+                    return $value;
                 },
                 'contentOptions' => [
                     'class' => 'row-name'
