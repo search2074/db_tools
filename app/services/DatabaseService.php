@@ -234,6 +234,19 @@ class DatabaseService
         return $this;
     }
 
+    public function optimizeTables(){
+        $tables = $this->getTables();
+
+        if(empty($tables)){
+            return $this;
+        }
+
+        $db = $this->db;
+        Yii::$app->$db->createCommand("OPTIMIZE TABLE `" . implode('`,`', $tables) . "`;")->execute();
+
+        return $this;
+    }
+
     public function getChecksumTables(){
         $tables = $this->getTables();
 
