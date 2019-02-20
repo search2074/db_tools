@@ -172,7 +172,7 @@ $this->params['breadcrumbs'][] = 'Database';
         ],
         'header' => '<h2>Изменения данных в таблице</h2>',
         'toggleButton' => false,
-        'footer' => '<button type="button" class="start-process btn btn-success">Start process</button>',
+        'footer' => '<div class="table__contols"><button type="button" class="start-process btn btn-success">Start process</button></div>',
     ]);
 
     Modal::end();

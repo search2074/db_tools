@@ -233,4 +233,32 @@ class DatabaseService
 
         return $this;
     }
+
+    public function getChecksumTables(){
+        $tables = $this->getTables();
+
+        if(empty($tables)){
+            return [];
+        }
+
+        $db = $this->db;
+        $items = Yii::$app->$db->createCommand("CHECKSUM TABLE `" . implode('`,`', $tables) . "`;")->queryAll();
+
+        if(empty($items)){
+            return [];
+        }
+
+        $result = [];
+        $dbName = self::getDbName(Yii::$app->$db->dsn);
+
+        foreach ($items as $item) {
+            $str = str_replace("{$dbName}.", '', $item['Table']);
+
+            if($str){
+                $result[$str] = $item['Checksum'];
+            }
+        }
+
+        return $result;
+    }
 }

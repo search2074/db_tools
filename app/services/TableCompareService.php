@@ -276,7 +276,7 @@ class TableCompareService
             return $this->comparedData[$index];
         }
 
-        return $this->comparedData;
+        return [];
     }
 
     private function getDataProvider($db = 'left_db'){

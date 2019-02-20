@@ -80,6 +80,8 @@ class DatabaseCompareService
 
         $leftTablesData = $this->getTablesData('left_db');
         $rightTablesData = $this->getTablesData('right_db');
+        $leftChecksumTables = $this->leftDatabaseService->getChecksumTables();
+        $rightChecksumTables = $this->rightDatabaseService->getChecksumTables();
 
         foreach ($allTables as $table => $fields) {
             $allTableColumns = [];
@@ -135,6 +137,15 @@ class DatabaseCompareService
                 if(!empty($leftTablesData[$table]) && !empty($rightTablesData[$table])){
                     $data_diff = array_diff($leftTablesData[$table], $rightTablesData[$table]);
 
+                    $leftTableChecksum = empty($leftChecksumTables[$table]) ? 0 : $leftChecksumTables[$table];
+                    $rightTableChecksum = empty($rightChecksumTables[$table]) ? 0 : $rightChecksumTables[$table];
+
+                    if($leftTableChecksum != $rightTableChecksum){
+                        $data_diff += [
+                            'TABLE_CHECKSUM' => $rightTableChecksum
+                        ];
+                    }
+
                     if(!empty($data_diff)){
 //                        var_dump($leftTablesData[$table]);
 //                        var_dump($rightTablesData[$table]);
@@ -177,6 +188,15 @@ class DatabaseCompareService
                 // diff data
                 if(!empty($leftTablesData[$table]) && !empty($rightTablesData[$table])){
                     $data_diff = array_diff($rightTablesData[$table], $leftTablesData[$table]);
+
+                    $leftTableChecksum = empty($leftChecksumTables[$table]) ? 0 : $leftChecksumTables[$table];
+                    $rightTableChecksum = empty($rightChecksumTables[$table]) ? 0 : $rightChecksumTables[$table];
+
+                    if($leftTableChecksum != $rightTableChecksum){
+                        $data_diff += [
+                            'TABLE_CHECKSUM' => $leftTableChecksum
+                        ];
+                    }
 
                     if(!empty($data_diff)){
                         $this->comparedTables['right_db'][$table]['edited_table_data'] = true;
@@ -303,8 +323,7 @@ class DatabaseCompareService
             DATA_FREE,
             AUTO_INCREMENT,
             TABLE_COLLATION,
-            TABLE_COMMENT,
-            UPDATE_TIME
+            TABLE_COMMENT
           FROM information_schema.TABLES 
           WHERE TABLE_CATALOG = "def" and TABLE_SCHEMA = :datebase
         ', [

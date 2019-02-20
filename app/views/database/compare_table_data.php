@@ -18,34 +18,30 @@ $this->params['breadcrumbs'][] = 'Compare table data';
         <?php \yii\widgets\Pjax::begin([
             'id' => 'left-table-pjax-id'
         ]); ?>
-        <?php if($tableCompareService->hasChanges('left_db')): ?>
-            <?php echo GridView::widget([
-                'id' => 'left-table',
-                'dataProvider' => $tableCompareService->getLeftDbDataProvider(),
-                'pager' => ['maxButtonCount' => 5],
-                'rowOptions'=>function($data, $pk, $index, $grid) {
-                    return GridViewHelper::tableRecordRowRenderer($data, $pk, $index, $grid);
-                },
-                'columns' => GridViewHelper::getTableColumns($tableCompareService->getComparedData('columns'), 'left_table')
-            ]); ?>
-        <?php endif; ?>
+        <?php echo GridView::widget([
+            'id' => 'left-table',
+            'dataProvider' => $tableCompareService->getLeftDbDataProvider(),
+            'pager' => ['maxButtonCount' => 5],
+            'rowOptions'=>function($data, $pk, $index, $grid) {
+                return GridViewHelper::tableRecordRowRenderer($data, $pk, $index, $grid);
+            },
+            'columns' => GridViewHelper::getTableColumns($tableCompareService->getComparedData('columns'), 'left_table')
+        ]); ?>
         <?php \yii\widgets\Pjax::end(); ?>
     </div>
     <div class="table-right__list col-md-6">
         <?php \yii\widgets\Pjax::begin([
             'id' => 'right-table-pjax-id'
         ]); ?>
-        <?php if($tableCompareService->hasChanges('right_db')): ?>
-            <?php echo GridView::widget([
-                'id' => 'right-table',
-                'dataProvider' => $tableCompareService->getRightDbDataProvider(),
-                'pager' => ['maxButtonCount' => 5],
-                'rowOptions'=>function($data, $pk, $index, $grid) {
-                    return GridViewHelper::tableRecordRowRenderer($data, $pk, $index, $grid);
-                },
-                'columns' => GridViewHelper::getTableColumns($tableCompareService->getComparedData('columns'), 'right_table')
-            ]); ?>
-        <?php endif; ?>
+        <?php echo GridView::widget([
+            'id' => 'right-table',
+            'dataProvider' => $tableCompareService->getRightDbDataProvider(),
+            'pager' => ['maxButtonCount' => 5],
+            'rowOptions'=>function($data, $pk, $index, $grid) {
+                return GridViewHelper::tableRecordRowRenderer($data, $pk, $index, $grid);
+            },
+            'columns' => GridViewHelper::getTableColumns($tableCompareService->getComparedData('columns'), 'right_table')
+        ]); ?>
         <?php \yii\widgets\Pjax::end(); ?>
     </div>
 </div>

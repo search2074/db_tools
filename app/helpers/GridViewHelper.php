@@ -153,6 +153,8 @@ class GridViewHelper {
             ];
         }
 
-        return $result;
+        if(!empty($result)){
+            return $result;
+        }
     }
 }
