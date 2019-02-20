@@ -141,7 +141,7 @@ a.desc:after {
 }
 
 .database__debug {
-    /*display: none;*/
+    display: none;
 }
 
 .database__contols {
@@ -240,7 +240,7 @@ a.desc:after {
 
 .table__list {
     overflow: hidden;
-    padding: 10px 0;
+    padding: 15px 0 0 0;
 }
 
 .table > tbody > tr.record-modified > td {
@@ -277,4 +277,14 @@ a.desc:after {
 .table-changes__textbox {
     width: 100%;
     height: 150px;
+}
+
+.table__list .grid-view .summary {
+    position: absolute;
+    top: -20px;
+}
+
+.table__list .grid-view .summary {
+    position: absolute;
+    top: -20px;
 }

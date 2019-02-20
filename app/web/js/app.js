@@ -46,7 +46,21 @@ $( document ).ready(function() {
         return records;
     }
 
-    function onTableDataCompared(params, html) {
+    function tableDataCompare() {
+        var params = {
+            source_database: sourceDatabase,
+            table_name: tableName
+        };
+
+        $.get(
+            "database/compare-table-data",
+            params,
+            onTableDataCompared
+        )
+            .fail(function(){alert("fatal error");});
+    }
+
+    function onTableDataCompared(html) {
         $databaseModal.find('.modal-body').html(html);
     }
 
@@ -68,12 +82,11 @@ $( document ).ready(function() {
 
     function onTableDataProcessed(data) {
         if(data.success){
-            $.pjax.reload({container:'#left-table-pjax-id', async: false});
-            $.pjax.reload({container:'#right-table-pjax-id', async: false});
+            alert('Успех');
             $.pjax.reload({container:'#left-database-pjax-id', async: false});
             $.pjax.reload({container:'#right-database-pjax-id', async: false});
-            $tableConfirmModal.modal('hide');
-            alert('Успех');
+
+            tableDataCompare();
         }
         else {
             alert('Error: ' + data.error.message);
@@ -83,6 +96,7 @@ $( document ).ready(function() {
     var $databaseModal = $('#database__modal');
     var $tableConfirmModal = $('#table-confirm__modal');
     var tableName = "";
+    var sourceDatabase = "";
     var rowRecords = [];
 
     $('.database__list').on('click', "input[name='selection[]']", function (e) {
@@ -109,22 +123,13 @@ $( document ).ready(function() {
 
     $('.database__list').on('click', '.view-table-data-diff-btn', function(){
         tableName = this.dataset.table_name;
+        sourceDatabase = this.dataset.source_database;
 
         $databaseModal.find('.modal-header h2').text('Изменения данных в таблице ' + tableName);
         $databaseModal.find('.modal-body').html("");
         $databaseModal.modal('show');
 
-        var params = {
-            source_database: this.dataset.source_database,
-            table_name: tableName
-        };
-
-        $.get(
-            "database/compare-table-data",
-            params,
-            onTableDataCompared.bind(this, params)
-        )
-            .fail(function(){alert("fatal error");});
+        tableDataCompare();
     });
 
     $(document).on('click', '.table__contols .start-process', function () {

@@ -156,10 +156,10 @@ $this->params['breadcrumbs'][] = 'Database';
 //        echo "В левой бд нет таблиц:\n";
 //        var_dump($rightDatabaseDiff);
 
-        echo "Разница в схеме слева:\n";
-        var_dump($dbCompareService->getRightDbTableDataDiff());
-        echo "Разница в схеме справа:\n";
-        var_dump($dbCompareService->getLeftDbTableDataDiff());
+//        echo "Разница в схеме слева:\n";
+//        var_dump($dbCompareService->getRightDbTableDataDiff());
+//        echo "Разница в схеме справа:\n";
+//        var_dump($dbCompareService->getLeftDbTableDataDiff());
 
         ?>
     </pre>
