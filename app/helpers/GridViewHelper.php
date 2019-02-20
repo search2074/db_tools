@@ -77,7 +77,7 @@ class GridViewHelper {
                 'class' => 'data-color'
             ];
         }
-        elseif($data['deleted_table']) {
+        elseif($data['dropped_table']) {
             return [
                 'title' => 'таблица удалена в источнике',
                 'class' => 'danger'
@@ -103,24 +103,25 @@ class GridViewHelper {
                 'options' => [
                     'database' => $db
                 ],
-                'format' => 'raw',
-                'value' => function($row, $value, $index, DataColumn $column){
+                'format' => 'text',
+//                'value' => function ($row, $value, $index, $column) {
+//                    return Html::tag('div', $row[$column->attribute], [
+//                        'class' => 'db-table__cell'
+//                    ]);
+//                },
+                'headerOptions' => [],
+                'contentOptions' => function ($row, $value, $index, $column) {
+                    $result = [
+                        'class' => 'row-name',
+                    ];
+
                     if(!empty($row['__record_modify_values']) && isset($row['__record_modify_values'][$column->attribute])){
-                        return Html::tag('span', $row[$column->attribute], [
-                            'title' => 'Измененное значение: '.$row['__record_modify_values'][$column->attribute],
-                            'class' => 'column-modified'
-                        ]);
+                        $result['class'] .= ' column-modified';
+                        $result['title'] = 'Измененное значение: '.$row['__record_modify_values'][$column->attribute];
                     }
 
-                    if(!empty($row[$column->attribute])){
-                        return $row[$column->attribute];
-                    }
-
-                    return $value;
-                },
-                'contentOptions' => [
-                    'class' => 'row-name'
-                ],
+                    return $result;
+                }
             ];
         }
 

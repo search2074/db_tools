@@ -44,11 +44,13 @@ class DatabaseCompareService
     private $counters = [
         'left_db' => [
             'created_table' => 0,
-            'dropped_tables' => 0,
+            'edited_schema_table' => 0,
+            'dropped_table' => 0,
         ],
         'right_db' => [
             'created_table' => 0,
-            'dropped_tables' => 0,
+            'edited_schema_table' => 0,
+            'dropped_table' => 0,
         ],
     ];
 
@@ -111,7 +113,7 @@ class DatabaseCompareService
                     'edited_schema_table' => false,
                     'edited_table_data' => false,
                     'table_data_diff' => [],
-                    'deleted_table' => false,
+                    'dropped_table' => false,
                     'columns' => $leftTableColumns,
                     'columns_diff' => [],
                 ];
@@ -163,13 +165,13 @@ class DatabaseCompareService
                     'edited_table_data' => false,
                     'table_data_diff' => [],
                     'edited_schema_table' => false,
-                    'deleted_table' => false,
+                    'dropped_table' => false,
                     'columns' => $rightTableColumns,
                     'columns_diff' => [],
                 ];
 
                 if(empty($leftTableColumns)){
-                    $this->comparedTables['right_db'][$table]['deleted_table'] = true;
+                    $this->comparedTables['right_db'][$table]['dropped_table'] = true;
                 }
                 else {
                     // echo "diff table {$table} for right and left db\n";
@@ -342,11 +344,11 @@ class DatabaseCompareService
     }
 
     public function getLeftDbCountDroppedTables(){
-        return $this->getCountTables('left_db', 'deleted_table');
+        return $this->getCountTables('left_db', 'dropped_table');
     }
 
     public function getRightDbCountDroppedTables(){
-        return $this->getCountTables('right_db', 'deleted_table');
+        return $this->getCountTables('right_db', 'dropped_table');
     }
 
     public function getLeftDbCountEditedSchemaTables(){

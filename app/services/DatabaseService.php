@@ -99,7 +99,7 @@ class DatabaseService
                 continue;
             }
 
-            if(empty($tables[$item['TABLE_NAME']]) && !is_array($tables[$item['TABLE_NAME']])){
+            if(empty($tables[$item['TABLE_NAME']])){
                 $tables[$item['TABLE_NAME']] = [];
             }
 
