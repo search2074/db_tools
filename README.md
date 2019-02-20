@@ -1,5 +1,5 @@
 # db_tools
-databases_tool
+Mysql database tools. Compare database, table schema, table data and sync.
 
 # configs
 Put configuration.php file to /app/config.
