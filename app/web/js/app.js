@@ -85,7 +85,7 @@ $( document ).ready(function() {
             alert('Успех');
             $.pjax.reload({container:'#left-database-pjax-id', async: false});
             $.pjax.reload({container:'#right-database-pjax-id', async: false});
-
+            $tableConfirmModal.modal('hide');
             tableDataCompare();
         }
         else {

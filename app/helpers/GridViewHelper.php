@@ -105,7 +105,7 @@ class GridViewHelper {
                 ],
                 'format' => 'raw',
                 'value' => function($row, $value, $index, DataColumn $column){
-                    if(!empty($row['__record_modify_values']) && !empty($row['__record_modify_values'][$column->attribute])){
+                    if(!empty($row['__record_modify_values']) && isset($row['__record_modify_values'][$column->attribute])){
                         return Html::tag('span', $row[$column->attribute], [
                             'title' => 'Измененное значение: '.$row['__record_modify_values'][$column->attribute],
                             'class' => 'column-modified'

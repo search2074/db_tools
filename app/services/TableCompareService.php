@@ -117,6 +117,13 @@ class TableCompareService
                     $this->comparedData['right_db'][$pk]
                 );
 
+                if(empty($modify)){
+                    $modify = array_diff(
+                        $this->comparedData['right_db'][$pk],
+                        $this->comparedData['left_db'][$pk]
+                    );
+                }
+
                 if(!empty($modify)){
                     $this->comparedData['left_db'][$pk]['__record_modify'] = true;
                     $this->comparedData['right_db'][$pk]['__record_modify'] = true;
