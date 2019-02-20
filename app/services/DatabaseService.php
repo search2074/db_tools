@@ -234,14 +234,21 @@ class DatabaseService
         return $this;
     }
 
-    public function optimizeTables(){
+    public function optimizeTables($table = null){
+        $db = $this->db;
+
+        if($table){
+            Yii::$app->$db->createCommand("OPTIMIZE TABLE `{$table}`;")->execute();
+
+            return $this;
+        }
+
         $tables = $this->getTables();
 
         if(empty($tables)){
             return $this;
         }
 
-        $db = $this->db;
         Yii::$app->$db->createCommand("OPTIMIZE TABLE `" . implode('`,`', $tables) . "`;")->execute();
 
         return $this;

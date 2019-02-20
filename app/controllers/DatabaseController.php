@@ -101,7 +101,7 @@ class DatabaseController extends Controller
                     $rightDatabaseService = new DatabaseService('right_db');
                     $leftDatabaseService->analyzeTables();
                     $rightDatabaseService->analyzeTables();
-                    $rightDatabaseService->optimizeTables();
+                    $rightDatabaseService->optimizeTables($table);
                 }
                 catch (\yii\db\Exception $exception){
                     return [
