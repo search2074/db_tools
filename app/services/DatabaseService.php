@@ -147,6 +147,47 @@ class DatabaseService
         return ArrayHelper::getColumn($columns, function($item){ return $item['COLUMN_NAME']; });
     }
 
+    public function getTableShowColumns($table_name){
+        $db = $this->db;
+
+        $columns = Yii::$app->$db
+            ->createCommand("SHOW COLUMNS FROM `{$table_name}`")->queryAll();
+
+        if(empty($columns)){
+            return [];
+        }
+
+        $data = [];
+
+        foreach ($columns as $column){
+            if(strstr($column['Type'], 'int')){
+                $column['field_type'] = 'number';
+            }
+            else {
+                $column['field_type'] = 'text';
+            }
+
+            $data[$column['Field']] = $column;
+        }
+
+        return $data;
+    }
+
+    public function getTableDataFromId($table_name, $pk, $id){
+        $db = $this->db;
+
+        $data = Yii::$app->$db
+            ->createCommand("
+                      SELECT *
+                      FROM `{$table_name}` 
+                      WHERE `{$pk}` = :num
+                    ", [
+                ':num' => $id,
+            ])->queryOne();
+
+        return $data;
+    }
+
     /**
      * Prepare sql queries for records
      * @param $table_name
@@ -154,18 +195,11 @@ class DatabaseService
      * @return mixed
      */
     public function prepareSqlForTableRecords($table_name, $records){
-        $db = $this->db;
+        $metaTableColumns = $this->getTableShowColumns($table_name);
 
         foreach ($records as $i => $record) {
             if(in_array($record['operation'], ['update', 'insert', 'drop'])){
-                $data = Yii::$app->$db
-                    ->createCommand("
-                      SELECT *
-                      FROM `{$table_name}` 
-                      WHERE `".$record['pk']."` = :num
-                    ", [
-                        ':num' => $record['num'],
-                    ])->queryOne();
+                $data = $this->getTableDataFromId($table_name, $record['pk'], $record['num']);
 
                 if(!empty($data)){
                     $records[$i]['data'] = $data;
@@ -179,11 +213,26 @@ class DatabaseService
                         $fields = [];
 
                         foreach ($data as $column_name => $column_value) {
-                            $fields[] = "`{$column_name}` = '{$column_value}'";
+                            $metaTableColumn = $metaTableColumns[$column_name];
+
+                            // null
+                            if(is_null($column_value)){
+                                $fields[] = "`{$column_name}` = NULL";
+                            }
+                            // int
+                            else if(isset($metaTableColumn['field_type']) && $metaTableColumn['field_type'] === 'number'){
+                                $fields[] = "`{$column_name}` = {$column_value}";
+                            }
+                            // string
+                            else {
+                                $fields[] = "`{$column_name}` = '{$column_value}'";
+                            }
                         }
 
-                        $records[$i]['sql'] = "UPDATE `{$table_name}` SET " . implode(', ', $fields) . " WHERE `" .
+                        $records[$i]['sql'] = "UPDATE `{$table_name}` SET " . implode(',', $fields) . " WHERE `" .
                             $record['pk'] . "` = '".$record['num']."';";
+//                        var_dump($records[$i]['sql']);
+//                        die;
                     }
                     else if($this->db === 'right_db' && $record['operation'] === 'drop'){
                         $records[$i]['sql'] = "DELETE FROM `{$table_name}` WHERE `" . $record['pk'] . "` = '".$record['num']."';";
