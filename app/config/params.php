@@ -2,6 +2,9 @@
 
 $params = [
     'adminEmail' => 'admin@example.com',
+    'tables_settings' => [
+        'ignore' => [],
+    ],
 ];
 
 if(file_exists(__DIR__ . '/configuration.php')){

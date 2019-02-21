@@ -99,6 +99,10 @@ class DatabaseService
                 continue;
             }
 
+            if(in_array($item['TABLE_NAME'], Yii::$app->params['tables_settings']['ignore'])){
+                continue;
+            }
+
             if(empty($tables[$item['TABLE_NAME']])){
                 $tables[$item['TABLE_NAME']] = [];
             }
