@@ -192,6 +192,17 @@ class DatabaseService
         return $data;
     }
 
+    private function clearValue($value){
+        if(empty($value)){
+            return $value;
+        }
+
+        $value = preg_replace('/(\'{1,})/i', "''", $value);
+        $value = preg_replace('/(\\\"{1,})/i', '"', $value);
+
+        return $value;
+    }
+
     /**
      * Prepare sql queries for records
      * @param $table_name
@@ -218,6 +229,7 @@ class DatabaseService
 
                         foreach ($data as $column_name => $column_value) {
                             $metaTableColumn = $metaTableColumns[$column_name];
+                            $column_value = $this->clearValue($column_value);
 
                             // null
                             if(is_null($column_value)){
