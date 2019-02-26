@@ -4,6 +4,7 @@ $params = [
     'adminEmail' => 'admin@example.com',
     'tables_settings' => [
         'ignore' => [],
+        'groups' => [],
     ],
 ];
 

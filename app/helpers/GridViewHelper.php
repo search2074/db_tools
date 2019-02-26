@@ -2,6 +2,7 @@
 
 namespace app\helpers;
 
+use Yii;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\grid\DataColumn;
@@ -49,39 +50,61 @@ class GridViewHelper {
         return $result;
     }
 
+    private static function getGroups($table_name){
+        $groups = Yii::$app->params['tables_settings']['groups'];
+
+        if(!empty($groups[$table_name])){
+            return $groups[$table_name];
+        }
+
+        return [];
+    }
+
     public static function dbTableRowRenderer($data, $table_name, $index, GridView $grid){
+        $result = [];
+
         if($data['created_table']){
-            return [
+            $result = [
                 'title' => 'новая таблица',
                 'class' => 'success'
             ];
         }
         elseif($data['edited_schema_table'] && $data['edited_table_data']){
-            return [
+            $result = [
                 'title' => 'изменения в схеме и данных относительно ' .
                     ($grid->options['id'] === 'left-database' ? 'получателя' : 'источника'),
                 'class' => 'schema-and-data-color'
             ];
         }
         elseif($data['edited_schema_table']) {
-            return [
+            $result = [
                 'title' => 'изменения в схеме относительно ' .
                     ($grid->options['id'] === 'left-database' ? 'получателя' : 'источника'),
                 'class' => 'schema-color'
             ];
         }
         elseif($data['edited_table_data']) {
-            return [
+            $result = [
                 'title' => 'изменения в данных относительно ' .
                     ($grid->options['id'] === 'left-database' ? 'получателя' : 'источника'),
                 'class' => 'data-color'
             ];
         }
         elseif($data['dropped_table']) {
-            return [
+            $result = [
                 'title' => 'таблица удалена в источнике',
                 'class' => 'danger'
             ];
+        }
+
+        if(!empty($result)){
+            $groups = self::getGroups($table_name);
+
+            if(!empty($result)){
+                $result['data-linked-tables'] = implode(',', $groups);
+            }
+
+            return $result;
         }
     }
 

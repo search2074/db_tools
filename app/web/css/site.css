@@ -243,6 +243,10 @@ a.desc:after {
     padding: 15px 0 0 0;
 }
 
+.table__list table th:first-child, .table__list table tr:first-child td:first-child {
+    width: 20px;
+}
+
 .table > tbody > tr.record-modified > td {
     background-color: #c9daf8;
 }

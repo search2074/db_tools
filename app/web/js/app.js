@@ -102,7 +102,34 @@ $( document ).ready(function() {
     $('.database__list').on('click', "input[name='selection[]']", function (e) {
         if($(this).parents('#right-database').length){
             alert('Действие запрещено');
-            e.preventDefault().stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        var $tr = $(this).parents('tr'),
+            linked_tables = $tr.data('linked-tables');
+
+        // get linked tables
+        if(typeof linked_tables !== 'undefined'){
+            var $table = $(this).parents('table');
+
+            linked_tables = linked_tables.split(',');
+
+            // find in linked table
+            $.each(linked_tables, function (item, table_name) {
+                var $current_tr = $table.find('[data-key="'+table_name+'"]'),
+                    current_tr_class = $current_tr.attr('class');
+
+                if(typeof $current_tr !== 'undefined'){
+                    // checkbox for sync
+                    var $checkbox = $current_tr.find('input[type="checkbox"]');
+
+                    if(typeof $checkbox !== 'undefined' && current_tr_class){
+                        // and change to checked
+                        $checkbox.prop('checked', true);
+                    }
+                }
+            });
         }
     });
 

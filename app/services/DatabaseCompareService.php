@@ -318,8 +318,8 @@ class DatabaseCompareService
             VERSION,
             ROW_FORMAT,
             TABLE_ROWS,
-            AVG_ROW_LENGTH,
-            DATA_LENGTH,
+            /*AVG_ROW_LENGTH,*/
+            /*DATA_LENGTH,*/
             MAX_DATA_LENGTH,
             INDEX_LENGTH,
             DATA_FREE,

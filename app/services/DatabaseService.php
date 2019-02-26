@@ -346,4 +346,24 @@ class DatabaseService
 
         return $result;
     }
+
+    public function repairTables($table = null){
+        $db = $this->db;
+
+        if($table){
+            Yii::$app->$db->createCommand("REPAIR TABLE `{$table}`;")->execute();
+
+            return $this;
+        }
+
+        $tables = $this->getTables();
+
+        if(empty($tables)){
+            return $this;
+        }
+
+        Yii::$app->$db->createCommand("REPAIR TABLE `" . implode('`,`', $tables) . "`;")->execute();
+
+        return $this;
+    }
 }

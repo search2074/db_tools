@@ -212,9 +212,6 @@ class DatabaseController extends Controller
             // start process on right table
             $rightDatabaseService->processTableData($records);
 
-            $leftDatabaseService->analyzeTables();
-            $rightDatabaseService->analyzeTables();
-
             return [
                 'success' => true
             ];

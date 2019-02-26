@@ -35,7 +35,18 @@ return [
             ],
         ],
         // if app located in folder
-        // 'baseUrl' => '/db-tools'
+        // 'baseUrl' => '/db-tools',
+        // tables settings
+        'tables_settings' => [
+            // for ignored tables
+            'ignore' => [
+                //'table_name',
+            ],
+            // table groups
+            'groups' => [
+                //'table_name',          
+            ],
+        ],
     ],
     
 ];
