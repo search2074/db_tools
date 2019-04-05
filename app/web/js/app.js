@@ -68,7 +68,14 @@ $( document ).ready(function() {
         if(data.success){
             $.pjax.reload({container:'#left-database-pjax-id', async: false});
             $.pjax.reload({container:'#right-database-pjax-id', async: false});
-            alert('Успех');
+
+            var result = 'Успех\n';
+
+            if(data.post_actions_result){
+                result += data.post_actions_result;
+            }
+
+            alert(result);
         }
         else {
             alert('Error: ' + data.error.message);
@@ -82,7 +89,13 @@ $( document ).ready(function() {
 
     function onTableDataProcessed(data) {
         if(data.success){
-            alert('Успех');
+            var result = 'Успех\n';
+
+            if(data.post_actions_result){
+                result += data.post_actions_result;
+            }
+
+            alert(result);
             $.pjax.reload({container:'#left-database-pjax-id', async: false});
             $.pjax.reload({container:'#right-database-pjax-id', async: false});
             $tableConfirmModal.modal('hide');

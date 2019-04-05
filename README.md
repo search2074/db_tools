@@ -48,7 +48,10 @@ return [
             ],
         ],
     ],
-    
+    // run actions after db sync/update
+    'post_actions' => [
+        'exec /var/www/your_script.sh'
+    ],
 ];
 ```
 

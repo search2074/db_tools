@@ -10,6 +10,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\services\DatabaseService;
+use app\services\PostActionsService;
 use app\services\TableCompareService;
 use app\services\DatabaseCompareService;
 
@@ -102,6 +103,7 @@ class DatabaseController extends Controller
                     $leftDatabaseService->analyzeTables();
                     $rightDatabaseService->analyzeTables();
                     $rightDatabaseService->optimizeTables($table);
+                    $postActionsResult = PostActionsService::run();
                 }
                 catch (\yii\db\Exception $exception){
                     return [
@@ -143,7 +145,8 @@ class DatabaseController extends Controller
         }
 
         return [
-            'success' => true
+            'success' => true,
+            'post_actions_result' => $postActionsResult
         ];
     }
 
@@ -211,9 +214,11 @@ class DatabaseController extends Controller
 
             // start process on right table
             $rightDatabaseService->processTableData($records);
+            $postActionsResult = PostActionsService::run();
 
             return [
-                'success' => true
+                'success' => true,
+                'post_actions_result' => $postActionsResult
             ];
         }
         catch (Exception $error){
