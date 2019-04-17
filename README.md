@@ -25,7 +25,12 @@ Mysql database tools. Compare database, table schema, table data and sync.
     * select tables from right:
     ![Alt text](/docs/images/table_delete/1.png?raw=true "select tables and click start process")
 
-# configs
+# install
+Clone repo, cd to /app and run command:
+```bash
+composer install
+```
+
 Put configuration.php file to /app/config.
 Example:
 ```php
@@ -79,8 +84,8 @@ return [
 ];
 ```
 
-# Nginx configs
-App in separate directory:
+setup nginx configs
+Example:
 ```bash
 server {
     listen  80;
