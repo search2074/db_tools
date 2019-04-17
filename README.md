@@ -3,10 +3,27 @@ Mysql database tools. Compare database, table schema, table data and sync.
 
 # description
 1. Transfer tables between databases
-* select new tables from left:
-![Alt text](/docs/images/table_transfer/1.png?raw=true "select tables")
-* and click to "Start process" button:
-![Alt text](/docs/images/table_transfer/2.png?raw=true "click start process")
+    * select new tables from left:
+    ![Alt text](/docs/images/table_transfer/1.png?raw=true "select tables")
+    * and click to "Start process" button:
+    ![Alt text](/docs/images/table_transfer/2.png?raw=true "click start process")
+2. Transfer tables data between databases
+    * click to "показать изменения":
+    ![Alt text](/docs/images/table_data_transfer/1.png?raw=true "view edit")
+    * select rows in modal window and click to "Start process" button:
+    ![Alt text](/docs/images/table_data_transfer/2.png?raw=true "click start process")
+3. Update tables data between databases
+    * select rows in modal window and click to "Start process" button:
+    ![Alt text](/docs/images/table_data_update/1.png?raw=true "click start process")
+4. Update tables fields:
+    * select tables from left and click to "Start process" button:
+    ![Alt text](/docs/images/table_fields_modify/1.png?raw=true "select tables and click start process")
+4. Delete tables data between databases
+    * select rows in modal window and click to "Start process" button:
+    ![Alt text](/docs/images/table_data_delete/1.png?raw=true "click start process")
+5. Delete tables:
+    * select tables from right:
+    ![Alt text](/docs/images/table_delete/1.png?raw=true "select tables and click start process")
 
 # configs
 Put configuration.php file to /app/config.
