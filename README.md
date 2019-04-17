@@ -1,10 +1,17 @@
 # db_tools
 Mysql database tools. Compare database, table schema, table data and sync.
 
+# description
+1. Transfer tables between databases
+* select new tables from left:
+![Alt text](/docs/images/table_transfer/1.png?raw=true "select tables")
+* and click to "Start process" button:
+![Alt text](/docs/images/table_transfer/2.png?raw=true "click start process")
+
 # configs
 Put configuration.php file to /app/config.
 Example:
-```
+```php
 <?php
 
 return [
