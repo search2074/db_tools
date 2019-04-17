@@ -74,14 +74,14 @@ return [
     ],
     // run actions after db sync/update
     'post_actions' => [
-        'exec /var/www/your_script.sh'
+        //'exec /var/www/your_script.sh'
     ],
 ];
 ```
 
 # Nginx configs
 App in separate directory:
-```
+```bash
 server {
     listen  80;
 	server_name site.com;
