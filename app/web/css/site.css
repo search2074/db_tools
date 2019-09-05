@@ -141,7 +141,7 @@ a.desc:after {
 }
 
 .database__debug {
-    /*display: none;*/
+    display: none;
 }
 
 .database__contols {

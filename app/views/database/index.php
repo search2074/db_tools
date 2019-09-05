@@ -149,6 +149,7 @@ $this->params['breadcrumbs'][] = 'Database';
     </div>
 </div>
 <div class="database__debug">
+    <h4>Debug panel</h4>
     <pre>
         <?php
 //        echo "В правой бд нет таблиц:\n";
@@ -160,6 +161,13 @@ $this->params['breadcrumbs'][] = 'Database';
 //        var_dump($dbCompareService->getRightDbTableDataDiff());
 //        echo "Разница в схеме справа:\n";
 //        var_dump($dbCompareService->getLeftDbTableDataDiff());
+
+//        $text = 'getItem(\"Бампер и тент-2\")';
+//        // replace single quotes
+//        $text = preg_replace('/(\'{1,})/i', "''", $text);
+//        $text = preg_replace('/(\\\"{1,})/i', '"', $text);
+//        var_dump($text);
+//        die;
 
         ?>
     </pre>

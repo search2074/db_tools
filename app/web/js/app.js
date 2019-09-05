@@ -137,7 +137,7 @@ $( document ).ready(function() {
                     // checkbox for sync
                     var $checkbox = $current_tr.find('input[type="checkbox"]');
 
-                    if(typeof $checkbox !== 'undefined' && current_tr_class){
+                    if(typeof $checkbox !== 'undefined'/* && current_tr_class*/){
                         // and change to checked
                         $checkbox.prop('checked', true);
                     }
