@@ -220,9 +220,19 @@ class DatabaseService
                     $records[$i]['data'] = $data;
 
                     if($this->db === 'left_db' && $record['operation'] === 'insert'){
+                        $values = [];
+                        foreach ($data as $field => $value) {
+                            if($value === null) {
+                                $values[] = "NULL";
+                            }
+                            else {
+                                $values[] = "\"{$value}\"";
+                            }
+                        }
+
                         $columns = array_keys($data);
-                        $records[$i]['sql'] = "INSERT INTO `{$table_name}` (`" . implode('`,`', $columns) . "`) VALUES ('" .
-                            implode("','", $data) . "');";
+                        $records[$i]['sql'] = "INSERT INTO `{$table_name}` (`" . implode('`,`', $columns) . "`) VALUES (" .
+                            implode(",", $values) . ");";
                     }
                     else if($this->db === 'left_db' && $record['operation'] === 'update'){
                         $fields = [];
