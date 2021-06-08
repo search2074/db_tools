@@ -226,7 +226,8 @@ class DatabaseService
                                 $values[] = "NULL";
                             }
                             else {
-                                $values[] = "\"{$value}\"";
+                                $value = addslashes($value);
+                                $values[] = "'{$value}'";
                             }
                         }
 
@@ -251,6 +252,8 @@ class DatabaseService
                             }
                             // string
                             else {
+                                $column_value = addslashes($column_value);
+                                //$column_value = addcslashes($column_value, '"\\/');
                                 $fields[] = "`{$column_name}` = '{$column_value}'";
                             }
                         }
@@ -284,12 +287,13 @@ class DatabaseService
 
         foreach ($records as $record) {
             if(!empty($record['sql'])){
-//                echo "db: {$db}, query: ".$record['sql']."\n";continue;
-                $result = Yii::$app->$db->createCommand($record['sql'])->execute();
-
-                if(!$result){
-                    throw new Exception("Error executing query: " . $record['sql']);
+                try {
+                    Yii::$app->$db->createCommand($record['sql'])->execute();
                 }
+                catch (\Exception $e) {
+                    throw new Exception("Error executing query: " . $e->getMessage());
+                }
+//                echo "db: {$db}, query: ".$record['sql']."\n";continue;
             }
         }
 
@@ -375,5 +379,10 @@ class DatabaseService
         Yii::$app->$db->createCommand("REPAIR TABLE `" . implode('`,`', $tables) . "`;")->execute();
 
         return $this;
+    }
+
+    private function isJson($string) {
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
     }
 }
