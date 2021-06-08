@@ -196,24 +196,19 @@ class DatabaseController extends Controller
         }
 
         try {
+            $tableName = Yii::$app->request->post('table_name');
+            $records = Yii::$app->request->post('records');
             $leftDatabaseService = new DatabaseService('left_db');
             $rightDatabaseService = new DatabaseService('right_db');
 
-            $records = $leftDatabaseService->prepareSqlForTableRecords(
-                Yii::$app->request->post('table_name'),
-                Yii::$app->request->post('records')
-            );
+            $queries = $leftDatabaseService->prepareSqlForTableRecords($tableName, $records);
 
             // start process on right table
-            $rightDatabaseService->processTableData($records);
-
-            $records = $rightDatabaseService->prepareSqlForTableRecords(
-                Yii::$app->request->post('table_name'),
-                Yii::$app->request->post('records')
-            );
+            $rightDatabaseService->processTableData($queries);
+            $queries = $rightDatabaseService->prepareSqlForTableRecords($tableName, $records);
 
             // start process on right table
-            $rightDatabaseService->processTableData($records);
+            $rightDatabaseService->processTableData($queries);
             $postActionsResult = PostActionsService::run();
 
             return [

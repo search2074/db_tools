@@ -218,53 +218,16 @@ class DatabaseService
 
                 if(!empty($data)){
                     $records[$i]['data'] = $data;
-
                     if($this->db === 'left_db' && $record['operation'] === 'insert'){
-                        $values = [];
-                        foreach ($data as $field => $value) {
-                            if($value === null) {
-                                $values[] = "NULL";
-                            }
-                            else {
-                                $value = addslashes($value);
-                                $values[] = "'{$value}'";
-                            }
-                        }
-
-                        $columns = array_keys($data);
-                        $records[$i]['sql'] = "INSERT INTO `{$table_name}` (`" . implode('`,`', $columns) . "`) VALUES (" .
-                            implode(",", $values) . ");";
+                        $records[$i]['sql'] = $this->prepareInsertQuery($table_name, $data);
                     }
                     else if($this->db === 'left_db' && $record['operation'] === 'update'){
-                        $fields = [];
-
-                        foreach ($data as $column_name => $column_value) {
-                            $metaTableColumn = $metaTableColumns[$column_name];
-                            $column_value = $this->clearValue($column_value);
-
-                            // null
-                            if(is_null($column_value)){
-                                $fields[] = "`{$column_name}` = NULL";
-                            }
-                            // int
-                            else if(isset($metaTableColumn['field_type']) && $metaTableColumn['field_type'] === 'number'){
-                                $fields[] = "`{$column_name}` = {$column_value}";
-                            }
-                            // string
-                            else {
-                                $column_value = addslashes($column_value);
-                                //$column_value = addcslashes($column_value, '"\\/');
-                                $fields[] = "`{$column_name}` = '{$column_value}'";
-                            }
-                        }
-
-                        $records[$i]['sql'] = "UPDATE `{$table_name}` SET " . implode(',', $fields) . " WHERE `" .
-                            $record['pk'] . "` = '".$record['num']."';";
-//                        var_dump($records[$i]['sql']);
-//                        die;
+                        // при update заменить на drop+insert
+                        $records[$i]['sql'] = $this->prepareDropQuery($table_name, $record['pk'], $record['num']);
+                        $records[$i]['sql'] .= $this->prepareInsertQuery($table_name, $data);
                     }
                     else if($this->db === 'right_db' && $record['operation'] === 'drop'){
-                        $records[$i]['sql'] = "DELETE FROM `{$table_name}` WHERE `" . $record['pk'] . "` = '".$record['num']."';";
+                        $records[$i]['sql'] = $this->prepareDropQuery($table_name, $record['pk'], $record['num']);
                     }
                 }
             }
@@ -274,21 +237,21 @@ class DatabaseService
     }
 
     /**
-     * @param $records
+     * @param $queries
      * @return bool
      * @throws Exception
      */
-    public function processTableData($records){
-        if(empty($records)){
+    public function processTableData($queries){
+        if(empty($queries)){
             throw new Exception("Empty data");
         }
 
         $db = $this->db;
 
-        foreach ($records as $record) {
-            if(!empty($record['sql'])){
+        foreach ($queries as $query) {
+            if(!empty($query['sql'])){
                 try {
-                    Yii::$app->$db->createCommand($record['sql'])->execute();
+                    Yii::$app->$db->createCommand($query['sql'])->execute();
                 }
                 catch (\Exception $e) {
                     throw new Exception("Error executing query: " . $e->getMessage());
@@ -384,5 +347,53 @@ class DatabaseService
     private function isJson($string) {
         json_decode($string);
         return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    private function prepareInsertQuery($tableName, $data) {
+        $values = [];
+        foreach ($data as $field => $value) {
+            if($value === null) {
+                $values[] = "NULL";
+            }
+            else {
+                $value = addslashes($value);
+                $values[] = "'{$value}'";
+            }
+        }
+
+        $columns = array_keys($data);
+        return "INSERT INTO `{$tableName}` (`" . implode('`,`', $columns) . "`) VALUES (" .
+            implode(",", $values) . ");";
+    }
+
+    private function prepareUpdateQuery($tableName, $data, $metaTableColumns, $pk, $num) {
+        $fields = [];
+
+        foreach ($data as $column_name => $column_value) {
+            $metaTableColumn = $metaTableColumns;
+            $column_value = $this->clearValue($column_value);
+
+            // null
+            if(is_null($column_value)){
+                $fields[] = "`{$column_name}` = NULL";
+            }
+            // int
+            else if(isset($metaTableColumn['field_type']) && $metaTableColumn['field_type'] === 'number'){
+                $fields[] = "`{$column_name}` = {$column_value}";
+            }
+            // string
+            else {
+                $column_value = addslashes($column_value);
+                //$column_value = addcslashes($column_value, '"\\/');
+                $fields[] = "`{$column_name}` = '{$column_value}'";
+            }
+        }
+
+        return "UPDATE `{$tableName}` SET " . implode(',', $fields) . " WHERE `" .
+            $pk . "` = '".$num."';";
+    }
+
+    private function prepareDropQuery($tableName, $pk, $num) {
+        return "DELETE FROM `{$tableName}` WHERE `" . $pk . "` = '".$num."';";
     }
 }
