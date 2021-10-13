@@ -103,7 +103,6 @@ class DatabaseController extends Controller
                     $leftDatabaseService->analyzeTables();
                     $rightDatabaseService->analyzeTables();
                     $rightDatabaseService->optimizeTables($table);
-                    $postActionsResult = PostActionsService::run();
                 }
                 catch (\yii\db\Exception $exception){
                     return [
@@ -133,6 +132,7 @@ class DatabaseController extends Controller
                     ];
                 }
             }
+            $postActionsResult = PostActionsService::run();
         }
         else {
             return [
