@@ -40,6 +40,10 @@ class DatabaseService
         return Db::getDsnAttribute('dbname', $dsn);
     }
 
+    public static function getHostName($dsn){
+        return Db::getDsnAttribute('host', $dsn);
+    }
+
     /**
      * @return ArrayDataProvider
      */

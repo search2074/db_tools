@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = 'Database';
     <div class="database-left__list col-md-5">
         <div class="database-left__title">
             <h4>Database: <?php echo DatabaseService::getDbName(Yii::$app->left_db->dsn) ?></h4>
+            <p>Host: <?php echo DatabaseService::getHostName(Yii::$app->left_db->dsn) ?></p>
             <?php if($c = $dbCompareService->getLeftDbCountNewTables()): ?>
                 <p>Новых таблиц: <?php echo $c; ?></p>
             <?php endif; ?>
@@ -73,6 +74,7 @@ $this->params['breadcrumbs'][] = 'Database';
     <div class="database-right__list col-md-5">
         <div class="database-right__title">
             <h4>Database: <?php echo DatabaseService::getDbName(Yii::$app->right_db->dsn) ?></h4>
+            <p>Host: <?php echo DatabaseService::getHostName(Yii::$app->right_db->dsn) ?></p>
             <?php if($c = $dbCompareService->getRightDbCountNewTables()): ?>
                 <p>Новых таблиц: <?php echo $c; ?></p>
             <?php endif; ?>
